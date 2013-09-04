@@ -8,6 +8,7 @@ data Player = X
             | O
 
 data Position = One | Two | Three | Four | Five | Six | Seven | Eight | Nine
+    deriving (Show)
 
 
 buildEmptyBoard :: Board
@@ -64,15 +65,31 @@ move :: (Board, Player, Position) -> Board
 move (x,X,p) = bbuildBoard(replacePosition(stringFromBoard(x), p, "x"))
 move (x,O,p) = bbuildBoard(replacePosition(stringFromBoard(x), p, "o"))
 
-gameLoop = do
-    putStrLn "Welcome to Tic Tac Toe"
-    putStrLn "......................"
+
+positionFromString :: String -> Position
+positionFromString "1" = One
+positionFromString "2" = Two
+positionFromString "3" = Three
+positionFromString "4" = Four
+positionFromString "5" = Five
+positionFromString "6" = Six
+positionFromString "7" = Seven
+positionFromString "8" = Eight
+positionFromString "9" = Nine
+
+
+gameLoop :: (String, Board) -> IO()
+gameLoop (x,y) = do
+    print y
     putStrLn "waiting for your move"
+    putStrLn "....................."
+    -- TODO:  Make sure is a valid move?
     m <- getLine
-    putStrLn "......"
-
-
+    putStrLn "You moved:"
+    print m
+    gameLoop(x, move(y, X, positionFromString(m)))
 
 main = do
-    gameLoop
-
+    putStrLn "Welcome to Tic Tac Toe"
+    putStrLn "......................"
+    gameLoop("none", buildEmptyBoard)
