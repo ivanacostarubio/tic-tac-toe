@@ -10,6 +10,25 @@ data Player = X
 data Position = One | Two | Three | Four | Five | Six | Seven | Eight | Nine
     deriving (Show)
 
+data GameStatus = Won | Undecided
+    deriving (Show)
+
+checkStatus :: Board -> GameStatus
+checkStatus (Board xs) = do
+    -- TODO
+    Won
+
+positionFromString :: String -> Position
+positionFromString "1" = One
+positionFromString "2" = Two
+positionFromString "3" = Three
+positionFromString "4" = Four
+positionFromString "5" = Five
+positionFromString "6" = Six
+positionFromString "7" = Seven
+positionFromString "8" = Eight
+positionFromString "9" = Nine
+
 
 buildEmptyBoard :: Board
 buildEmptyBoard = Board ["123", "456", "789"]
@@ -56,8 +75,6 @@ buildBoard (x) = Board [(take 3 x ), (take 3 (drop 3 x)),  (take 3 (reverse x))]
 bbuildBoard :: [String] -> Board
 bbuildBoard(x) = Board x
 --
-
---
 --
 -- A move : takes a board, a player and a position. Returns a new Board with the updated position
 -- TODO: validate the move is valid. AKA, it is not taken by another player
@@ -66,30 +83,18 @@ move (x,X,p) = bbuildBoard(replacePosition(stringFromBoard(x), p, "x"))
 move (x,O,p) = bbuildBoard(replacePosition(stringFromBoard(x), p, "o"))
 
 
-positionFromString :: String -> Position
-positionFromString "1" = One
-positionFromString "2" = Two
-positionFromString "3" = Three
-positionFromString "4" = Four
-positionFromString "5" = Five
-positionFromString "6" = Six
-positionFromString "7" = Seven
-positionFromString "8" = Eight
-positionFromString "9" = Nine
-
-
-gameLoop :: (String, Board) -> IO()
-gameLoop (x,y) = do
+gameLoop :: (String, Board, Player) -> IO()
+gameLoop (x,y,z) = do
     print y
     putStrLn "waiting for your move"
     putStrLn "....................."
     -- TODO:  Make sure is a valid move?
     m <- getLine
-    putStrLn "You moved:"
-    print m
-    gameLoop(x, move(y, X, positionFromString(m)))
+    case z of
+      X -> gameLoop(x, move(y, z, positionFromString(m)), O)
+      O -> gameLoop(x, move(y, z, positionFromString(m)), X)
 
 main = do
     putStrLn "Welcome to Tic Tac Toe"
     putStrLn "......................"
-    gameLoop("none", buildEmptyBoard)
+    gameLoop("none", buildEmptyBoard, X)
