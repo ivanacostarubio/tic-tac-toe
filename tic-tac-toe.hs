@@ -7,16 +7,22 @@ data Board = Board [String]
 data Player = X
             | O
 
-data Position = One | Two | Three | Four | Five | Six | Seven | Eight | Nine
+data Position = One | Two | Three | Four | Five | Six | Seven | Eight | Nine | PError
     deriving (Show)
 
 data GameStatus = Won | Undecided
     deriving (Show)
 
-checkStatus :: Board -> GameStatus
-checkStatus (Board xs) = do
-    -- TODO
-    Won
+checkWinningCondition :: Board -> GameStatus
+checkWinningCondition (Board xs)
+    | allTheSame (firstElement xs ) == True = Won
+    | allTheSame (secondElement xs) == True = Won
+    | allTheSame (thirdElement xs) == True = Won
+
+allTheSame :: (Eq a) => [a] -> Bool
+allTheSame xs = all (== head xs) (tail xs)
+
+
 
 positionFromString :: String -> Position
 positionFromString "1" = One
@@ -28,7 +34,7 @@ positionFromString "6" = Six
 positionFromString "7" = Seven
 positionFromString "8" = Eight
 positionFromString "9" = Nine
-
+positionFromString _ = PError
 
 buildEmptyBoard :: Board
 buildEmptyBoard = Board ["123", "456", "789"]
@@ -50,14 +56,12 @@ replacePosition (x, Seven, z) = [ firstElement(x), secondElement(x), appendToFir
 replacePosition (x, Eight, z) = [ firstElement(x), secondElement(x), appendToSecond(z, thirdElement(x)) ]
 replacePosition (x, Nine, z) = [ firstElement(x), secondElement(x), appendToThird(z, thirdElement(x))]
 
-
 appendToFirst :: (String, String) -> String
 appendToFirst (x,y) = x ++ (drop 1 y)
 appendToSecond :: (String, String) -> String
 appendToSecond (x,y) = (take 1 y) ++ x ++ (drop 2 y)
 appendToThird :: (String, String) -> String
 appendToThird (x,y) = (take 2 y)++ x
-
 
 firstElement :: [String] -> String
 firstElement x = head x
@@ -66,35 +70,37 @@ thirdElement x = unwords (drop 2 x)
 secondElement :: [String] -> String
 secondElement x = head (drop 1 x)
 
-
 buildBoard :: String -> Board
 buildBoard (x) = Board [(take 3 x ), (take 3 (drop 3 x)),  (take 3 (reverse x))]
--- Cover case when board is bigger than expected
+-- TODO: Cover case when board is bigger than expected
 -- This has a board represented as: "........." or "x..o..x.."
---
+
 bbuildBoard :: [String] -> Board
 bbuildBoard(x) = Board x
---
---
--- A move : takes a board, a player and a position. Returns a new Board with the updated position
--- TODO: validate the move is valid. AKA, it is not taken by another player
+
 move :: (Board, Player, Position) -> Board
 move (x,X,p) = bbuildBoard(replacePosition(stringFromBoard(x), p, "x"))
 move (x,O,p) = bbuildBoard(replacePosition(stringFromBoard(x), p, "o"))
 
+otherPlayer :: Player -> Player
+otherPlayer X = O
+otherPlayer O = X
 
-gameLoop :: (String, Board, Player) -> IO()
-gameLoop (x,y,z) = do
+--
+-- TODO: Check that a player can't move to a taken position
+--
+
+gameLoop :: (Board, Player) -> IO()
+gameLoop (y,z) = do
     print y
     putStrLn "waiting for your move"
     putStrLn "....................."
-    -- TODO:  Make sure is a valid move?
     m <- getLine
-    case z of
-      X -> gameLoop(x, move(y, z, positionFromString(m)), O)
-      O -> gameLoop(x, move(y, z, positionFromString(m)), X)
+    case positionFromString(m) of
+      PError -> gameLoop(y,z)
+      pp -> gameLoop(move(y,z,pp), otherPlayer(z))
 
 main = do
     putStrLn "Welcome to Tic Tac Toe"
     putStrLn "......................"
-    gameLoop("none", buildEmptyBoard, X)
+    gameLoop(buildEmptyBoard, X)
