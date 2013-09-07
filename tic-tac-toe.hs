@@ -18,6 +18,7 @@ checkWinningCondition (Board xs)
     | allTheSame (firstElement xs ) == True = Won
     | allTheSame (secondElement xs) == True = Won
     | allTheSame (thirdElement xs) == True = Won
+    | otherwise = Undecided
 
 allTheSame :: (Eq a) => [a] -> Bool
 allTheSame xs = all (== head xs) (tail xs)
@@ -89,16 +90,25 @@ otherPlayer O = X
 --
 -- TODO: Check that a player can't move to a taken position
 --
+--
+--
 
-gameLoop :: (Board, Player) -> IO()
-gameLoop (y,z) = do
-    print y
-    putStrLn "waiting for your move"
-    putStrLn "....................."
+askUserForInput :: (Board, Player) -> IO()
+askUserForInput (y, z) = do
     m <- getLine
     case positionFromString(m) of
       PError -> gameLoop(y,z)
       pp -> gameLoop(move(y,z,pp), otherPlayer(z))
+
+
+gameLoop :: (Board, Player) -> IO()
+gameLoop (board,z) = do
+    print board
+    putStrLn "waiting for your move"
+    putStrLn "....................."
+    case checkWinningCondition board of
+        Won -> putStrLn "You won"
+        Undecided -> askUserForInput(board,z)
 
 main = do
     putStrLn "Welcome to Tic Tac Toe"
