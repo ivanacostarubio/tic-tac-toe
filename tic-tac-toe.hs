@@ -28,8 +28,6 @@ checkWinningCondition (Board xs)
 allTheSame :: (Eq a) => [a] -> Bool
 allTheSame xs = all (== head xs) (tail xs)
 
-
-
 positionFromString :: String -> Position
 positionFromString "1" = One
 positionFromString "2" = Two
@@ -117,7 +115,6 @@ otherPlayer O = X
 --
 --
 --
-
 askUserForInput :: (Board, Player) -> IO()
 askUserForInput (y, z) = do
     m <- getLine
