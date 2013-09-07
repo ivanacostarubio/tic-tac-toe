@@ -18,6 +18,11 @@ checkWinningCondition (Board xs)
     | allTheSame (firstElement xs ) == True = Won
     | allTheSame (secondElement xs) == True = Won
     | allTheSame (thirdElement xs) == True = Won
+    | allTheSame (firstElements xs) == True = Won
+    | allTheSame (secondElements xs) == True = Won
+    | allTheSame (thirdElements xs) == True = Won
+    | allTheSame (lDiagonal xs) == True = Won
+    | allTheSame (rDiagonal xs) == True = Won
     | otherwise = Undecided
 
 allTheSame :: (Eq a) => [a] -> Bool
@@ -70,6 +75,26 @@ thirdElement :: [String] -> String
 thirdElement x = unwords (drop 2 x)
 secondElement :: [String] -> String
 secondElement x = head (drop 1 x)
+
+firstElements :: [String] -> String
+firstElements (x:xs) = head x : firstElements xs
+firstElements x = []
+
+secondElements :: [String] -> String
+secondElements (x:xs) = head (drop 1 x) : secondElements xs
+secondElements x = []
+
+thirdElements :: [String] -> String
+thirdElements (x:xs) =  head (reverse(x)) : thirdElements xs
+thirdElements x = []
+
+lDiagonal :: [String] -> String
+lDiagonal (x:y:z:[]) =  (head x) : head (drop 1 y) : head( reverse z) : []
+
+rDiagonal :: [String] -> String
+rDiagonal (x:y:z:[]) =  head(reverse(x)) : head (drop 1 y) : head z : []
+
+
 
 buildBoard :: String -> Board
 buildBoard (x) = Board [(take 3 x ), (take 3 (drop 3 x)),  (take 3 (reverse x))]
