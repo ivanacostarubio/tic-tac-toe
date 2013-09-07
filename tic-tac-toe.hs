@@ -97,7 +97,7 @@ rDiagonal (x:y:z:[]) =  head(reverse(x)) : head (drop 1 y) : head z : []
 
 
 buildBoard :: String -> Board
-buildBoard (x) = Board [(take 3 x ), (take 3 (drop 3 x)),  (take 3 (reverse x))]
+buildBoard (x) = Board [(take 3 x ), (take 3 (drop 3 x)),  reverse(take 3 (reverse x))]
 -- TODO: Cover case when board is bigger than expected
 -- This has a board represented as: "........." or "x..o..x.."
 
