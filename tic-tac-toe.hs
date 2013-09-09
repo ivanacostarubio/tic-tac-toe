@@ -26,6 +26,17 @@ checkWinningCondition (Board xs)
     | allXsOrOs xs = Draw
     | otherwise = Undecided
 
+validMoves :: Board -> [String]
+validMoves (Board xs) = map filterPlayersOut xs
+
+filterPlayersOut :: String -> String
+filterPlayersOut (xs) = filter notxOro xs
+
+notxOro :: Char -> Bool
+notxOro('x') = False
+notxOro('o') = False
+notxOro(_) = True
+
 allXsOrOs :: [String] -> Bool
 allXsOrOs xs = xOro(firstElement xs) && xOro(secondElement xs) && xOro (thirdElement xs) 
 
@@ -104,7 +115,6 @@ rDiagonal :: [String] -> String
 rDiagonal (x:y:z:[]) =  head(reverse(x)) : head (drop 1 y) : head z : []
 
 
-
 buildBoard :: String -> Board
 buildBoard (x) = Board [(take 3 x ), (take 3 (drop 3 x)),  reverse(take 3 (reverse x))]
 -- TODO: Cover case when board is bigger than expected
@@ -121,10 +131,7 @@ otherPlayer :: Player -> Player
 otherPlayer X = O
 otherPlayer O = X
 
---
 -- TODO: Check that a player can't move to a taken position
---
---
 --
 askUserForInput :: (Board, Player) -> IO()
 askUserForInput (y, z) = do
