@@ -15,14 +15,14 @@ data GameStatus = Won | Undecided
 
 checkWinningCondition :: Board -> GameStatus
 checkWinningCondition (Board xs)
-    | allTheSame (firstElement xs ) == True = Won
-    | allTheSame (secondElement xs) == True = Won
-    | allTheSame (thirdElement xs) == True = Won
-    | allTheSame (firstElements xs) == True = Won
-    | allTheSame (secondElements xs) == True = Won
-    | allTheSame (thirdElements xs) == True = Won
-    | allTheSame (lDiagonal xs) == True = Won
-    | allTheSame (rDiagonal xs) == True = Won
+    | allTheSame (firstElement xs ) = Won
+    | allTheSame (secondElement xs) = Won
+    | allTheSame (thirdElement xs) = Won
+    | allTheSame (firstElements xs) = Won
+    | allTheSame (secondElements xs) = Won
+    | allTheSame (thirdElements xs) = Won
+    | allTheSame (lDiagonal xs) = Won
+    | allTheSame (rDiagonal xs) = Won
     | otherwise = Undecided
 
 allTheSame :: (Eq a) => [a] -> Bool
