@@ -2,7 +2,7 @@ import Control.Applicative
 
 data Board = Board [String]
            | Error
-    deriving (Show)
+           deriving(Show)
 
 data Player = X
             | O
@@ -10,7 +10,7 @@ data Player = X
 data Position = One | Two | Three | Four | Five | Six | Seven | Eight | Nine | PError
     deriving (Show)
 
-data GameStatus = Won | Undecided
+data GameStatus = Won | Undecided | Draw
     deriving (Show)
 
 checkWinningCondition :: Board -> GameStatus
@@ -23,7 +23,18 @@ checkWinningCondition (Board xs)
     | allTheSame (thirdElements xs) = Won
     | allTheSame (lDiagonal xs) = Won
     | allTheSame (rDiagonal xs) = Won
+    | allXsOrOs xs = Draw
     | otherwise = Undecided
+
+allXsOrOs :: [String] -> Bool
+allXsOrOs xs = xOro(firstElement xs) && xOro(secondElement xs) && xOro (thirdElement xs) 
+
+xOro :: String -> Bool
+xOro(xs) = allEqualto(xs,'x','o')
+
+allEqualto :: (String,Char,Char) -> Bool
+allEqualto (x:xs,z,zz) = (x == z) || (x==zz) && allEqualto(xs,z,zz)
+allEqualto (xs,z,zz) = True
 
 allTheSame :: (Eq a) => [a] -> Bool
 allTheSame xs = all (== head xs) (tail xs)
